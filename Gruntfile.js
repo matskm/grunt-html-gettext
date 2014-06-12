@@ -30,6 +30,13 @@ module.exports = function(grunt) {
 
     // Configuration to be run (and then tested).
     html_gettext: {
+      msm_test:{
+        files:{
+          'tmp/msm_test.out' : ['test/home.html']
+        }
+      },
+
+
       default_options: {
         options: {
         },
