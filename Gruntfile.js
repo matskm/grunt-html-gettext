@@ -32,7 +32,7 @@ module.exports = function(grunt) {
     html_gettext: {
       msm_test:{
         files:{
-          'tmp/msm_test.out' : ['test/home.html', 'test/surveys.html', 'test/reward.html']
+          'tmp/msm_test.out' : ['test/*.html']
           //'tmp/msm_test.out' : ['test/home.html']
         }
       },
