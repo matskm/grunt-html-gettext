@@ -32,7 +32,8 @@ module.exports = function(grunt) {
     html_gettext: {
       msm_test:{
         files:{
-          'tmp/msm_test.out' : ['test/home.html']
+          'tmp/msm_test.out' : ['test/home.html', 'test/surveys.html', 'test/reward.html']
+          //'tmp/msm_test.out' : ['test/home.html']
         }
       },
 
@@ -72,7 +73,8 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'html_gettext', 'nodeunit']);
+  //grunt.registerTask('test', ['clean', 'html_gettext', 'nodeunit']);
+  grunt.registerTask('test', ['clean', 'html_gettext']);
 
   // By default, lint and run all tests.
   //grunt.registerTask('default', ['jshint', 'test']);

@@ -1,0 +1,20 @@
+<div class="speech-bubble" data-bind="attr: { 'data-header-title': reward.type != 'none'? 'Your reward' : ko.unwrap(Company) || ko.unwrap(Name), 'data-theme-color': reward.type != 'none' && details.Theme, 'data-reward-type': reward.type, 'data-came-from': came_from }, css: reward.type != 'none' && ko.prefix('theme-', details.Theme)">
+    <span>
+
+    <div data-bind="module: 'reward/expiry'" ></div>
+
+    <div class="details">
+        <div class="scroll" data-bind="module: {name: 'reward/type/' + reward.type, data: reward}"></div>
+    </div>
+    </span>
+    <div class="some-reward" data-bind="module: 'reward/social'"></div>
+</div>
+
+<!-- translatorcomment this might be barmy -->
+<p  translate="yes" class="some-reward came-from-survey">Use the button below to save this reward.</p>
+<a class="some-reward came-from-survey action" href="#rewards/mine"><span>Save to wallet</span></a>
+
+<p class="some-reward came-from-other">Once you have used this reward, use the button below to remove it.</p>
+<a class="some-reward came-from-other action" href="#^rewards/mine" data-bind="click: redeemed"><span>Remove</span></a>
+
+<a class="no-reward" href="#rewards/find"><span>Find rewards</span></a>

@@ -239,7 +239,11 @@ FilterHtmlHandler.prototype = {
   },
 
   toPotFile: function(){
-    return this._tr.join("");
+    var join_str = this._tr.join("");
+
+    var trim_str = join_str.replace(",","");
+
+    return trim_str;
   },
 
 // handler interface
@@ -269,7 +273,11 @@ FilterHtmlHandler.prototype = {
 
     for (var i = 0; i < attrs.length; i++)
     {
-      translate_flag = this.attribute(sTagName, attrs[i].name, attrs[i].value);
+      if(this.attribute(sTagName, attrs[i].name, attrs[i].value) === true){
+        translate_flag = true;
+      }
+
+      //translate_flag = this.attribute(sTagName, attrs[i].name, attrs[i].value);
     }
 
     if(translate_flag === true){
@@ -376,12 +384,19 @@ FilterHtmlHandler.prototype = {
       var line_num_str = "#: "+ path + ":" + this._n_count.toString() + "\n";
       this._tr.push(line_num_str);
       
+
+
       if(trans_comment != null){
 
-        var com_str = "#. " + trans_comment + "\n";
+        var trim_trans_comment = trans_comment.replace("translatorcomment","");
+
+        var com_str = "#. " + trim_trans_comment + "\n";
+
+        this._tr.push(com_str);
 
       }
-      this._tr.push(com_str);
+      
+      
 
       var msgid_str = "msgid " + "\"" + s + "\"" + "\n";
       this._tr.push(msgid_str);
@@ -442,9 +457,6 @@ module.exports = function(grunt) {
         }
       }).map(function(filepath) {
         
-        var exec = require('child_process').exec;
-        var done = grunt.task.current.async(); 
-
         // Read file source.
         var src = grunt.file.read(filepath);
 
@@ -459,10 +471,11 @@ module.exports = function(grunt) {
         // Return the result
         return f.toPotFile();
 
-      }).join(grunt.util.normalizelf(options.separator));
+      //}).join(grunt.util.normalizelf(options.separator));
+      });
 
       // Handle options.
-      src += options.punctuation;
+      //src += options.punctuation;
 
       // Write the destination file.
       grunt.file.write(f.dest, src);
