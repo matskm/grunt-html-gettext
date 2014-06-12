@@ -264,6 +264,11 @@ FilterHtmlHandler.prototype = {
           .replace(/\:\s*expression\s*\(/gi, ":BLOCKED(");
       this._sb.push(" " + sName + "=\"" + sValue + "\"");
     }
+    // MSM 12/6/14 translate case
+    else if(nl === "translate")
+    {
+      this._sb.push(" " + "foundtranslate" + "=\"" + sValue + "\"");
+    }
     else
     {
       if (sValue == null){
