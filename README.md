@@ -1,6 +1,7 @@
-# grunt-html-gettext
-
 > Plugin to enable simple parsing of html files extracting inner text from tags with translate attribute set to yes. Output is pot file for gettext workflow
+
+## Introduction
+The June 12th 2104 version fo this plugin is the initial version, and is very much a work in progress. The basic idea is to use the html attribute "translate" to produce gettext pot files. It was very frustrating that no-one else had done this that I could find. In its current incarnation this plugin is definitely not mature (e.g., you have to use the comment string translatorcomment to pick up comments, the options are non-existant). But the code illustrates the approach, and it works for me. Happy to help if you're trying to do the same as me. And I intend to tidy this up. Very much indebted to Erik Arvidsson for his very simple html-parser which underlies this code.
 
 ## Getting Started
 This plugin requires Grunt `~0.4.5`
