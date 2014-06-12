@@ -13,6 +13,9 @@
 // Parser follows
 // Original: Copyright 2004 Erik Arvidsson. All Rights Reserved.
 
+
+
+
 function SimpleHtmlParser()
 {
 }
@@ -26,6 +29,7 @@ SimpleHtmlParser.prototype = {
   startTagRe: /^<([^>\s\/]+)((\s+[^=>\s]+(\s*=\s*((\"[^"]*\")|(\'[^']*\')|[^>\s]+))?)*)\s*\/?\s*>/m,
   endTagRe: /^<\/([^>\s]+)[^>]*>/m,
   attrRe:   /([^=\s]+)(\s*=\s*((\"([^"]*)\")|(\'([^']*)\')|[^>\s]+))?/gm,
+  
 
   parse:  function (s, oHandler)
   {
@@ -37,6 +41,9 @@ SimpleHtmlParser.prototype = {
     var res, lc, lm, rc, index;
     var treatAsChars = false;
     var oThis = this;
+
+    // Flag for outputting translatable inner text
+    var tflag_inner_text = false;
     
     while (s.length > 0)
     {
@@ -59,6 +66,10 @@ SimpleHtmlParser.prototype = {
       // end tag
       else if (s.substring(0, 2) === "</")
       {
+        // Turnoff tflag_inner_text
+        tflag_inner_text = false;
+
+
         if (this.endTagRe.test(s))
         {
           lc = RegExp.leftContext;
@@ -89,8 +100,17 @@ SimpleHtmlParser.prototype = {
 
           lm.replace(this.startTagRe, function ()
           {
+            // Check for translation
+            if(oThis.parseStartTag_trans_flag.apply(oThis, arguments) === true){
+              tflag_inner_text = true;
+              console.log("Trans flag set");
+            }
+
+
             return oThis.parseStartTag.apply(oThis, arguments);
           });
+
+
 
           s = rc;
           treatAsChars = false;
@@ -106,12 +126,12 @@ SimpleHtmlParser.prototype = {
         index = s.indexOf("<");
         if (index === -1)
         {
-           this.contentHandler.characters(s);
+           this.contentHandler.characters(s,tflag_inner_text);
           s = "";
         }
         else
         {
-          this.contentHandler.characters(s.substring(0, index));
+          this.contentHandler.characters(s.substring(0, index),tflag_inner_text);
           s = s.substring(index);
         }
       }
@@ -124,6 +144,12 @@ SimpleHtmlParser.prototype = {
   {
     var attrs = this.parseAttributes(sTagName, sRest);
     this.contentHandler.startElement(sTagName, attrs);
+  },
+
+  parseStartTag_trans_flag:  function (sTag, sTagName, sRest)
+  {
+    var attrs = this.parseAttributes(sTagName, sRest);
+    return this.contentHandler.startElement(sTagName, attrs);
   },
 
   parseEndTag:  function (sTag, sTagName)
@@ -173,11 +199,18 @@ SimpleHtmlParser.prototype = {
 function FilterHtmlHandler()
 {
   this._sb = [];
+
+  // potfile output string
+  this._tr = [];
+
+  // Keep count of the newlines
+  this._n_count = 1; 
 }
 
 FilterHtmlHandler.prototype = {
 
   _inBlocked: null,
+  
 
   clear:  function ()
   {
@@ -193,8 +226,10 @@ FilterHtmlHandler.prototype = {
 
   startElement:   function (sTagName, attrs)
   {
+    var ret_val = false;
+
     if (this._inBlocked){
-      return;
+      return ret_val;
     }
 
     var ls = sTagName.toLowerCase();
@@ -210,14 +245,22 @@ FilterHtmlHandler.prototype = {
         this._sb.push("<" + sTagName);
     }
 
+    var translate_flag = false;
+
     for (var i = 0; i < attrs.length; i++)
     {
-      this.attribute(sTagName, attrs[i].name, attrs[i].value);
+      translate_flag = this.attribute(sTagName, attrs[i].name, attrs[i].value);
+    }
+
+    if(translate_flag === true){
+      ret_val = true;
     }
 
     if (!this._inBlocked){
       this._sb.push(">");
     }
+
+    return ret_val;
   },
 
   endElement:     function (s)
@@ -235,6 +278,8 @@ FilterHtmlHandler.prototype = {
 
   attribute:  function (sTagName, sName, sValue)
   {
+    var translate_flag = false;
+
     if (this._inBlocked){
       return;
     }
@@ -268,6 +313,7 @@ FilterHtmlHandler.prototype = {
     else if(nl === "translate")
     {
       this._sb.push(" " + "foundtranslate" + "=\"" + sValue + "\"");
+      translate_flag = true;
     }
     else
     {
@@ -278,18 +324,49 @@ FilterHtmlHandler.prototype = {
         this._sb.push(" " + sName + "=\"" + sValue + "\"");
       }
     }
+
+    return translate_flag;
   },
 
-  characters: function (s)
+  characters: function (s, tflag_inner_text)
   {
+    
+
     if (!this._inBlocked){
       this._sb.push(s);
     }
+
+    var newline_match = s.match(/\n/g);
+    if(newline_match != null){
+      this._n_count = this._n_count + newline_match.length;
+    }
+
+
+    
+
+    // Translation inner text
+    if(tflag_inner_text === true){
+      var line_num_str = "line-num: " + this._n_count.toString() + "\n";
+      var msgid_str = "msgid " + "\"" + s + "\"" + "\n";
+      var msgstr_str = "msgstr" + "\"" + "\"" + "\n";
+
+      this._sb.push(line_num_str);
+      this._sb.push(msgid_str);
+      this._sb.push(msgstr_str);
+    }
+
   },
 
   comment:  function (s)
   {
-    //this._sb.push(s);
+    var newline_match = s.match(/\n/g);
+    if(newline_match != null){
+      this._n_count = this._n_count + newline_match.length;
+    }
+
+    
+
+    this._sb.push(s);
   }
 };
 
