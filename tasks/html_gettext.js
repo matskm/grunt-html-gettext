@@ -37,6 +37,7 @@ SimpleHtmlParser.prototype = {
     var res, lc, lm, rc, index;
     var treatAsChars = false;
     var oThis = this;
+    
     while (s.length > 0)
     {
       // Comment
