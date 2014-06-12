@@ -31,7 +31,7 @@ SimpleHtmlParser.prototype = {
   attrRe:   /([^=\s]+)(\s*=\s*((\"([^"]*)\")|(\'([^']*)\')|[^>\s]+))?/gm,
   
 
-  parse:  function (s, oHandler)
+  parse:  function (s, path, oHandler)
   {
     if (oHandler){
       this.contentHandler = oHandler;
@@ -53,7 +53,7 @@ SimpleHtmlParser.prototype = {
         index = s.indexOf("-->");
         if (index !== -1)
         {
-          this.contentHandler.comment(s.substring(4, index));
+          this.contentHandler.comment(s.substring(4, index),path);
           s = s.substring(index + 3);
           treatAsChars = false;
         }
@@ -126,12 +126,12 @@ SimpleHtmlParser.prototype = {
         index = s.indexOf("<");
         if (index === -1)
         {
-           this.contentHandler.characters(s,tflag_inner_text);
+           this.contentHandler.characters(s,tflag_inner_text,path);
           s = "";
         }
         else
         {
-          this.contentHandler.characters(s.substring(0, index),tflag_inner_text);
+          this.contentHandler.characters(s.substring(0, index),tflag_inner_text,path);
           s = s.substring(index);
         }
       }
@@ -328,7 +328,7 @@ FilterHtmlHandler.prototype = {
     return translate_flag;
   },
 
-  characters: function (s, tflag_inner_text)
+  characters: function (s, tflag_inner_text, path)
   {
     
 
@@ -346,7 +346,7 @@ FilterHtmlHandler.prototype = {
 
     // Translation inner text
     if(tflag_inner_text === true){
-      var line_num_str = "line-num: " + this._n_count.toString() + "\n";
+      var line_num_str = "#: "+ path + ":" + this._n_count.toString() + "\n";
       var msgid_str = "msgid " + "\"" + s + "\"" + "\n";
       var msgstr_str = "msgstr" + "\"" + "\"" + "\n";
 
@@ -357,7 +357,7 @@ FilterHtmlHandler.prototype = {
 
   },
 
-  comment:  function (s)
+  comment:  function (s, path)
   {
     var newline_match = s.match(/\n/g);
     if(newline_match != null){
@@ -420,7 +420,7 @@ module.exports = function(grunt) {
         // Attach the content handler to the parser
         p.contentHandler = f;
         // Do the parsing
-        p.parse(src);
+        p.parse(src, filepath);
         // Return the result
         return f.toString();
 
