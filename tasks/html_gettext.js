@@ -238,6 +238,10 @@ FilterHtmlHandler.prototype = {
     return this._sb.join("");
   },
 
+  toPotFile: function(){
+    return this._tr.join("");
+  },
+
 // handler interface
 
   startElement:   function (sTagName, attrs)
@@ -370,20 +374,20 @@ FilterHtmlHandler.prototype = {
       
 
       var line_num_str = "#: "+ path + ":" + this._n_count.toString() + "\n";
-      this._sb.push(line_num_str);
+      this._tr.push(line_num_str);
       
       if(trans_comment != null){
 
         var com_str = "#. " + trans_comment + "\n";
 
       }
-      this._sb.push(com_str);
+      this._tr.push(com_str);
 
       var msgid_str = "msgid " + "\"" + s + "\"" + "\n";
-      this._sb.push(msgid_str);
+      this._tr.push(msgid_str);
 
-      var msgstr_str = "msgstr" + "\"" + "\"" + "\n";
-      this._sb.push(msgstr_str);
+      var msgstr_str = "msgstr " + "\"" + "\"" + "\n" + "\n";
+      this._tr.push(msgstr_str);
     }
 
   },
@@ -453,7 +457,7 @@ module.exports = function(grunt) {
         // Do the parsing
         p.parse(src, filepath);
         // Return the result
-        return f.toString();
+        return f.toPotFile();
 
       }).join(grunt.util.normalizelf(options.separator));
 
