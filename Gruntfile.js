@@ -32,28 +32,29 @@ module.exports = function(grunt) {
     html_gettext: {
       msm_test:{
         files:{
-          'tmp/msm_test.out' : ['test/*.html']
+          'locales/templates/LC_MESSAGES/msm_test.pot' : ['test/*.html']
           //'tmp/msm_test.out' : ['test/home.html']
         }
       },
 
 
-      default_options: {
-        options: {
-        },
-        files: {
-          'tmp/default_options': ['test/fixtures/testing', 'test/fixtures/123']
-        }
-      },
-      custom_options: {
-        options: {
-          separator: ': ',
-          punctuation: ' !!!'
-        },
-        files: {
-          'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123']
-        }
-      }
+      //default_options: {
+      //  options: {
+      //  },
+      //  files: {
+      //    '/default_options': ['test/fixtures/testing', 'test/fixtures/123']
+      //  }
+      //},
+      //custom_options: {
+      //  options: {
+      //    separator: ': ',
+      //    punctuation: ' !!!'
+      //  },
+      //  files: {
+      //    'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123']
+      //  }
+     ///}
+
     },
 
     // Unit tests.

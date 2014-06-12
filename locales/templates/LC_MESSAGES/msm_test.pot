@@ -1,0 +1,25 @@
+#: test/home.html:7
+#.   this might be tricky 
+msgid "Take a survey"
+msgstr ""
+
+#: test/home.html:10
+#.   this might be barmy 
+msgid "My rewards wallet"
+msgstr ""
+
+,#: test/reward.html:14
+#.   this might be barmy 
+msgid "Use the button below to save this reward."
+msgstr ""
+
+,#: test/surveys.html:5
+#.    Boba fett 
+msgid "Surveys near me"
+msgstr ""
+
+#: test/surveys.html:9
+#.    Boba fett 
+msgid "The Vault"
+msgstr ""
+
