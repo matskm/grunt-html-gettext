@@ -18,6 +18,9 @@
 
 function SimpleHtmlParser()
 {
+
+  this._comment_stash = null;
+
 }
 
 SimpleHtmlParser.prototype = {
@@ -53,6 +56,19 @@ SimpleHtmlParser.prototype = {
         index = s.indexOf("-->");
         if (index !== -1)
         {
+          // Test to trigger this comment to store in the most recent comment stash
+
+          // First reset 
+          oThis._comment_stash = null;
+
+          var this_comment = s.substring(4, index);
+
+          if(this_comment.match(/translatorcomment/)){
+            oThis._comment_stash = this_comment;
+            //console.log("stashed: " + this_comment);
+          }
+
+
           this.contentHandler.comment(s.substring(4, index),path);
           s = s.substring(index + 3);
           treatAsChars = false;
@@ -126,12 +142,12 @@ SimpleHtmlParser.prototype = {
         index = s.indexOf("<");
         if (index === -1)
         {
-           this.contentHandler.characters(s,tflag_inner_text,path);
+           this.contentHandler.characters(s,tflag_inner_text,path, oThis._comment_stash);
           s = "";
         }
         else
         {
-          this.contentHandler.characters(s.substring(0, index),tflag_inner_text,path);
+          this.contentHandler.characters(s.substring(0, index),tflag_inner_text,path, oThis._comment_stash);
           s = s.substring(index);
         }
       }
@@ -328,7 +344,7 @@ FilterHtmlHandler.prototype = {
     return translate_flag;
   },
 
-  characters: function (s, tflag_inner_text, path)
+  characters: function (s, tflag_inner_text, path, trans_comment)
   {
     
 
@@ -346,12 +362,27 @@ FilterHtmlHandler.prototype = {
 
     // Translation inner text
     if(tflag_inner_text === true){
-      var line_num_str = "#: "+ path + ":" + this._n_count.toString() + "\n";
-      var msgid_str = "msgid " + "\"" + s + "\"" + "\n";
-      var msgstr_str = "msgstr" + "\"" + "\"" + "\n";
+      
+      
 
+
+      //console.log("trans_comment: " + trans_comment);
+      
+
+      var line_num_str = "#: "+ path + ":" + this._n_count.toString() + "\n";
       this._sb.push(line_num_str);
+      
+      if(trans_comment != null){
+
+        var com_str = "#. " + trans_comment + "\n";
+
+      }
+      this._sb.push(com_str);
+
+      var msgid_str = "msgid " + "\"" + s + "\"" + "\n";
       this._sb.push(msgid_str);
+
+      var msgstr_str = "msgstr" + "\"" + "\"" + "\n";
       this._sb.push(msgstr_str);
     }
 
