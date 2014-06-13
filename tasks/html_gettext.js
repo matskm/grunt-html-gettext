@@ -143,11 +143,19 @@ SimpleHtmlParser.prototype = {
         if (index === -1)
         {
            this.contentHandler.characters(s,tflag_inner_text,path, oThis._comment_stash);
+
+           // Reset comment stash
+           oThis._comment_stash = null;
+
           s = "";
         }
         else
         {
           this.contentHandler.characters(s.substring(0, index),tflag_inner_text,path, oThis._comment_stash);
+
+          // Reset comment stash
+           oThis._comment_stash = null;
+          
           s = s.substring(index);
         }
       }
