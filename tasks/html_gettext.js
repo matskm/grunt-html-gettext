@@ -144,8 +144,8 @@ SimpleHtmlParser.prototype = {
         {
            this.contentHandler.characters(s,tflag_inner_text,path, oThis._comment_stash);
 
-           // Reset comment stash
-           oThis._comment_stash = null;
+           // Reset comment stash if tflag_inner_text has fired
+           if(tflag_inner_text === true){ oThis._comment_stash = null; }
 
           s = "";
         }
@@ -153,9 +153,9 @@ SimpleHtmlParser.prototype = {
         {
           this.contentHandler.characters(s.substring(0, index),tflag_inner_text,path, oThis._comment_stash);
 
-          // Reset comment stash
-           oThis._comment_stash = null;
-          
+           // Reset comment stash if tflag_inner_text has fired
+           if(tflag_inner_text === true){ oThis._comment_stash = null; }
+
           s = s.substring(index);
         }
       }
