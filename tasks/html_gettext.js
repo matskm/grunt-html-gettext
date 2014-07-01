@@ -382,31 +382,31 @@ FilterHtmlHandler.prototype = {
 
     // Translation inner text
     if(tflag_inner_text === true){
-      
-      
+ 
+ 
 
 
       //console.log("trans_comment: " + trans_comment);
-      
+ 
+
+      var trim_trans_comment = (trans_comment || "").replace("translatorcomment", "").trim();
+
+      if (trim_trans_comment.length > 0) {
+
+	var com_str = "#. " + trim_trans_comment + "\n";
+
+	this._tr.push(com_str);
+
+      }
+ 
+ 
 
       var line_num_str = "#: "+ path + ":" + this._n_count.toString() + "\n";
       this._tr.push(line_num_str);
-      
+ 
 
 
-      if(trans_comment != null){
-
-        var trim_trans_comment = trans_comment.replace("translatorcomment","");
-
-        var com_str = "#. " + trim_trans_comment + "\n";
-
-        this._tr.push(com_str);
-
-      }
-      
-      
-
-      var msgid_str = "msgid " + "\"" + s + "\"" + "\n";
+      var msgid_str = "msgid " + "\"" + s.replace(/\\(?!n)/g, '\\\\') + "\"" + "\n";
       this._tr.push(msgid_str);
 
       var msgstr_str = "msgstr " + "\"" + "\"" + "\n" + "\n";
@@ -477,7 +477,7 @@ module.exports = function(grunt) {
         // Do the parsing
         p.parse(src, filepath);
         // Return the result
-        return f.toPotFile();
+        return new Buffer(f.toPotFile());
 
       //}).join(grunt.util.normalizelf(options.separator));
       });
@@ -486,7 +486,7 @@ module.exports = function(grunt) {
       //src += options.punctuation;
 
       // Write the destination file.
-      grunt.file.write(f.dest, src);
+      grunt.file.write(f.dest, Buffer.concat(src));
 
       // Print a success message.
       grunt.log.writeln('File "' + f.dest + '" created.');
