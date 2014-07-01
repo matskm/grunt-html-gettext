@@ -1,7 +1,7 @@
 {
   "name": "grunt-html-gettext",
   "description": "Plugin to enable simple parsing of html files extracting inner text from tags with translate attribute set to yes. Output is pot file for gettext workflow",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "homepage": "https://github.com/matskm/grunt-html-gettext",
   "author": {
     "name": "Mat Martin",
@@ -27,6 +27,7 @@
     "test": "grunt test"
   },
   "devDependencies": {
+    "html-entities": "^1.0.10",
     "grunt-contrib-jshint": "^0.9.2",
     "grunt-contrib-clean": "^0.5.0",
     "grunt-contrib-nodeunit": "^0.3.3",

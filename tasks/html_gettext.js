@@ -8,6 +8,8 @@
 
 'use strict';
 
+var Entities = require('html-entities').AllHtmlEntities;
+var entities = new Entities();
 
 
 // Parser follows
@@ -415,7 +417,7 @@ FilterHtmlHandler.prototype = {
  
 
 
-      var msgid_str = "msgid " + "\"" + s.replace(/\\(?!n)/g, '\\\\') + "\"" + "\n";
+      var msgid_str = "msgid " + "\"" + entities.decode(s).replace(/\\(?!n)/g, '\\\\') + "\"" + "\n";
       this._tr.push(msgid_str);
 
       var msgstr_str = "msgstr " + "\"" + "\"" + "\n" + "\n";
