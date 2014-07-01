@@ -249,7 +249,7 @@ FilterHtmlHandler.prototype = {
   toPotFile: function(){
     var join_str = this._tr.join("");
 
-    var trim_str = join_str.replace(",","");
+    var trim_str = join_str;
 
     return trim_str;
   },
