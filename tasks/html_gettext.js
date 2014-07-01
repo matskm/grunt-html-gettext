@@ -123,7 +123,7 @@ SimpleHtmlParser.prototype = {
             }
 
 
-            return oThis.parseStartTag.apply(oThis, arguments);
+            return oThis.parseStartTag.apply(oThis, Array.prototype.concat(Array.prototype.slice.call(arguments, 0, 3), [path, oThis._comment_stash]));
           });
 
 
@@ -164,10 +164,10 @@ SimpleHtmlParser.prototype = {
     }
   },
 
-  parseStartTag:  function (sTag, sTagName, sRest)
+  parseStartTag:  function (sTag, sTagName, sRest, path, comment)
   {
     var attrs = this.parseAttributes(sTagName, sRest);
-    this.contentHandler.startElement(sTagName, attrs);
+    this.contentHandler.startElement(sTagName, attrs, path, comment);
   },
 
   parseStartTag_trans_flag:  function (sTag, sTagName, sRest)
@@ -256,7 +256,7 @@ FilterHtmlHandler.prototype = {
 
 // handler interface
 
-  startElement:   function (sTagName, attrs)
+  startElement:   function (sTagName, attrs, path, comment)
   {
     var ret_val = false;
 
@@ -289,6 +289,15 @@ FilterHtmlHandler.prototype = {
     }
 
     if(translate_flag === true){
+      if(path){
+        for (var i = 0; i < attrs.length; i++)
+        {
+          if(/^data-content/.test(attrs[i].name)){
+            this.characters(attrs[i].value, (attrs[i].value || "").trim().length > 0, path, comment);
+          }
+        }
+      }
+
       ret_val = true;
     }
 
